@@ -1,4 +1,4 @@
---Initial Revision
+# Duplicate Sorter
 
 Sorts out duplicates of email addresses.
 
@@ -17,9 +17,9 @@ If the email already exists in baseline, then it prepends: 'Duplicate' to the en
 NOTE: after EACH file submission, test.txt and duplicates.txt is only appended.
 
 
-future considerations:
-add DB support
-add support for additional fields in addition to email
+## future considerations:
++ add DB support
++ add support for additional fields in addition to email
 
 Meant to run locally -- probably overkill but wanted to use it as a starter to try out other technologies - Mocha, Chai...
 
