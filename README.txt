@@ -23,4 +23,6 @@ add support for additional fields in addition to email
 
 Meant to run locally -- probably overkill but wanted to use it as a starter to try out other technologies - Mocha, Chai...
 
+>>Adding to confirm GitHub set up is working
+
 
