@@ -49,7 +49,7 @@ function upload(response, postData) {
       var emailArray = GetEmailsFromString(data)   // puts input from read file into array
       originaldata = originaldata.toLowerCase();   // put to lowercase to make matching easier - this is expensive
 
-      var newEmailsStream = fs.createWriteStream("./tmp/test.txt",{'flags': 'a'});
+      var newEmailsStream = fs.createWriteStream("./tmp/newEmails.txt",{'flags': 'a'});
       var duplicateEmailStream = fs.createWriteStream("./tmp/duplicates.txt",{'flags': 'a'});
 
       emailArray.forEach( function(entry) {        // check each item in array (these are the potential new emails)

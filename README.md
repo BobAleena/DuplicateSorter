@@ -6,11 +6,11 @@ Start server:
 
 node duplicateSorter.js
 
-This starts the sorter taking in two files - a baseline file and a file to check. both must reside within the tmp subfolder.
+This starts the sorter taking in two files - a baseline file and an input file to check. both must reside within the tmp subfolder.
 
 go to: http://localhost:8888/ or http://localhost:8888/start
 
-sends output to newemails.txt
+sends output to newEmails.txt
 
 If the email already exists in baseline, then it prepends: 'Duplicate' to the entry and adds to the 'duplicates.txt' file
 
