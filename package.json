@@ -1,0 +1,13 @@
+{
+  "name": "DuplicateSorter",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./duplicateSorter.js",
+    "test": "../node_modules/.bin/cucumber.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "cucumber": "^0.4.1"
+  }
+}
