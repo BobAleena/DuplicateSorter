@@ -4,20 +4,24 @@ var requestHandlers = require("./requestHandlers");
 
 
 var handle = {}
+
+//retrieves start page
 handle["/"] = requestHandlers.start;
-handle["/start"] = requestHandlers.start;
-handle["/upload"] = requestHandlers.upload; 
 
+//retrieves all emails in db
+handle["/getEmails"] = requestHandlers.getEmails;
 
-// Note! you can pass a function in anonymously here too!
+// returns true/false if single email + template exists in db
+handle["/checkSingleEmail"] = requestHandlers.checkSingleEmail;
+
+// checks a list of emails, returns list of emails not in db 
+handle["/checkEmailList"] = requestHandlers.checkEmailList;  
+
+// adds a single new email to db
+handle["/addNewDoc"] = requestHandlers.addNewDoc; 
+
+// add a list of new emails to db 
+handle["/addNewList"] = requestHandlers.addNewList;
 
 server.start(router.route, handle);
 
-
-
-// an alternate way to do the above is pass the function inline
-// example: 
-// 
-// server.start(function(pathname) {
-// 	console.log("I'm in the request for " + pathname);
-//   });

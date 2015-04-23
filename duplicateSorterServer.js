@@ -2,7 +2,7 @@ var http = require("http");
 var url = require("url");
 
 function startSorterServer(route, handle) {
-  console.log("SorterServer started");
+  //console.log("SorterServer started");
 
   function onRequest(request, response) {
     var postData = "";
