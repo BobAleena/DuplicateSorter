@@ -23,5 +23,12 @@ handle["/addNewDoc"] = requestHandlers.addNewDoc;
 // add a list of new emails to db 
 handle["/addNewList"] = requestHandlers.addNewList;
 
+//flag email as bounced
+handle["/emailBounced"] = requestHandlers.emailBounced;
+
+//remove email 
+handle["/removeEmailHandler"] = requestHandlers.removeEmailHandler;
+
+
 server.start(router.route, handle);
 

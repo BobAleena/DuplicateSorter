@@ -41,8 +41,23 @@ function start(response, postData) {
       'Choose template to check for:' + templates + '<br>' +
       '<input type="submit" value="Submit text" />'+
       '</form>';
-  
+
     form3 = 
+      'Use this form to <strong>flag a single email address: </strong></br>' +
+      '<form action="/emailBounced" method="POST">'+ 
+      'Enter Email to flag: <input type="text" name="emailAddress"><br>'+
+      'Set status:   <input type="checkbox" name="bounced" value="true"> Bounced<br>' +
+      '<input type="submit" value="Submit text" />'+
+      '</form>';
+  
+    form4 = 
+      ' Use this form to <strong>remove a single email address</strong><br>' +
+      '<form action="/removeEmailHandler" method="POST">'+ 
+      'Enter email address to add: <input type="text" name="removeEmail"><br>'+
+      '<input type="submit" value="Submit text" />'+
+      '</form>';
+  
+    form5 = 
       ' Use this form to <strong>add a SINGLE user </strong><br>' +
       '<form action="/addNewDoc" method="POST">'+ 
       'Enter email address to add: <input type="text" name="emailAddress"><br>'+
@@ -50,7 +65,7 @@ function start(response, postData) {
       '<input type="submit" value="Submit text" />'+
       '</form>';
 
-    form4 = 
+    form6 = 
       'Use this form to <strong>add emails from a file</strong>: </br>' +
       '<form action="/addNewList" method="POST">'+ 
       'Enter Inputfile to check: <input type="file" name="inputfile"><br>'+
@@ -58,7 +73,7 @@ function start(response, postData) {
       '<input type="submit" value="Submit text" />'+
       '</form>' +  utils.getHTMLClose();
 
-    HTMLbody = form1 + form2 + form3 + form4;
+    HTMLbody = form1 + form2 + form3 + form4 + form5 + form6; 
     var body =  utils.getHTMLHead() + HTMLbody
     utils.writeHTMLPage(response,body);
     }
@@ -87,7 +102,6 @@ function checkSingleEmail(response, postData) {
     utils.writeHTMLPage(response, utils.getHTMLHead() + body + utils.getHTMLClose());
   });
 }
-
 
 
 function getEmailTemplates (response, postData) {
@@ -142,6 +156,53 @@ function addFieldToDocs(response,postData) {
     utils.writeHTMLPage(response,body);
     
   })
+}
+
+function emailBounced (response, postData) {
+  //var emailsToCheck = querystring.parse(postData).emailAddress;
+  var bouncedVal = (querystring.parse(postData).bounced === 'true');
+
+  /*utils.updateEmail (emailToCheck, bouncedVal, dbName, function (err) {
+    if (err)
+       { console.error(err); response.send("Error " + err); }
+
+    var body = utils.getHTMLHead() + 'Updated ' + emailToCheck + 'to be ' + bouncedVal + utils.getHTMLClose();
+    utils.writeHTMLPage(response,body);
+
+  });*/
+
+  fs.readFile("./tmp/" + querystring.parse(postData).emailAddress, 'utf8', function (err,data) {
+    if (err) { console.log("Error: " + err); console.error(err); return; }
+
+    var emailArray = utils.getEmailsFromString(data)   // puts input from read file into array
+
+    utils.updateEmail(emailArray, bouncedVal, dbName, function (err, newEmails) {
+      var content = utils.getHTMLHead() + newEmails + utils.getHTMLClose();
+      utils.writeHTMLPage(response, content); 
+    });
+  });
+
+
+
+}
+
+function removeEmailHandler (response, postData) {
+  //var emailsToCheck = querystring.parse(postData).emailAddress;
+  var removeEmail = querystring.parse(postData).removeEmail;
+
+  utils.removeEmailAddress(removeEmail, function (err, result) {
+    if (err) { console.log("Error: " + err); console.error(err); return; }
+
+    var content = utils.getHTMLHead() + " RemovedEmail " + removeEmail + " " + result + utils.getHTMLClose();
+    utils.writeHTMLPage(response, content); 
+
+  });
+}
+
+
+
+function addNotesToEmail (response, postData) {
+
 }
 
 
@@ -274,3 +335,5 @@ exports.checkSingleEmail = checkSingleEmail;
 exports.checkEmailList = checkEmailList;
 exports.addNewDoc = addNewDoc;
 exports.addNewList = addNewList;
+exports.emailBounced = emailBounced;
+exports.removeEmailHandler = removeEmailHandler;
