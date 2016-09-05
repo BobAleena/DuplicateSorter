@@ -181,4 +181,77 @@ describe('#removeEmailAddressDoesNotExist', function () {
   });
 });
 
+describe('#addANewTemplate', function() {
+  it("should be successful since the template should not exist yet", function (done) {
+    utils.addNewTemplate("MochaTest_Template", function(err, result) {
+      if (err) {
+        console.error(err)
+        return;
+      }
+      if (result == undefined) {
+        assert (false);
+      } else {
+        assert (true)
+      }
+      done();
+    });
+  });
+});
+
+describe('#addANewTemplateNegative', function() {
+  it("should be unsuccessful since the template should exist from previous", function (done) {
+    utils.addNewTemplate("MochaTest_Template", function(err, result) {
+      if (result == undefined) {
+        assert (true);
+      } else {
+        assert (false)
+      }
+      done();
+    });
+  });
+});
+
+describe('#RemoveTemplate', function() {
+  it("should be successful since the template should exist yet", function (done) {
+    utils.removeTemplate("MochaTest_Template", function(err, result) {
+      if (err) {
+        console.error(err);
+      }
+    assert (result);
+    done();
+  });
+});
+});
+
+describe('GetEmailsForTemplate', function() {
+it("should fail with a number of emailaddresses", function(done) {
+  utils.retrieveEmailsForTemplate("MochaTest_Template", function(err,result) {
+    if (err) {
+      console.error(err);      
+    }
+    assert (!result);
+    done();
+  });
+});
+
+});
+
+describe('GetEmailsForTemplate', function() {
+it("should be successful with a number of emailaddresses", function(done) {
+  utils.retrieveEmailsForTemplate("2015Update", function(err,result) {
+    if (err) {
+      console.error(err);      
+    }
+    result.forEach(function(address) {
+      console.log(address)
+    });
+    assert (result);
+    done();
+  });
+});
+
+});
+
+
+
 

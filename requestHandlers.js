@@ -26,6 +26,8 @@ function start(response, postData) {
     templates = templates + "<option value=\"testtemplate\">TestTemplate</option>";
 
     templates = templates + "</select>";
+
+    //form check all emails within a file
     form1 = 
       'Use this form to <strong>check emails from a file</strong>: </br>' +
       '<form action="/checkEmailList" method="POST">'+ 
@@ -33,7 +35,8 @@ function start(response, postData) {
       'Choose template to check for:' + templates + '<br>' +
       '<input type="submit" value="Submit text" />'+
       '</form>';
-
+    
+    //form: check for presence of a single email address
     form2 = 
       'Use this form to check <strong>a single email address: </strong></br>' +
       '<form action="/checkSingleEmail" method="POST">'+ 
@@ -42,6 +45,7 @@ function start(response, postData) {
       '<input type="submit" value="Submit text" />'+
       '</form>';
 
+    //form: flag a single email as bounced
     form3 = 
       'Use this form to <strong>flag a single email address: </strong></br>' +
       '<form action="/emailBounced" method="POST">'+ 
@@ -50,6 +54,7 @@ function start(response, postData) {
       '<input type="submit" value="Submit text" />'+
       '</form>';
   
+    //form: remove a single email address
     form4 = 
       ' Use this form to <strong>remove a single email address</strong><br>' +
       '<form action="/removeEmailHandler" method="POST">'+ 
@@ -57,28 +62,61 @@ function start(response, postData) {
       '<input type="submit" value="Submit text" />'+
       '</form>';
   
+    //form: ADD a single email address
     form5 = 
-      ' Use this form to <strong>add a SINGLE user </strong><br>' +
-      '<form action="/addNewDoc" method="POST">'+ 
+      ' Use this form to <strong>add a SINGLE email address </strong><br>' +
+      '<form action="/addNewEmailAddress" method="POST">'+ 
       'Enter email address to add: <input type="text" name="emailAddress"><br>'+
       'Choose template to add:' + templates + '<br>' +
       '<input type="submit" value="Submit text" />'+
       '</form>';
 
+    //form: Add a list of email addresses from a file
     form6 = 
       'Use this form to <strong>add emails from a file</strong>: </br>' +
       '<form action="/addNewList" method="POST">'+ 
       'Enter Inputfile to check: <input type="file" name="inputfile"><br>'+
       'Choose template to check for:' + templates + '<br>' +
       '<input type="submit" value="Submit text" />'+
-      '</form>' +  utils.getHTMLClose();
+      '</form>';
 
-    HTMLbody = form1 + form2 + form3 + form4 + form5 + form6; 
-    var body =  utils.getHTMLHead() + HTMLbody
+    form7 = 
+      'Use this form to <strong>add a new Template</strong>: </br>' +
+      '<form action="/addNewTemplate" method="POST">'+ 
+      'Enter TemplateName to add: <input type="text" name="emailTemplate"><br>'+
+      '<input type="submit" value="Submit text" />'+
+      '</form>';
+
+    form8 =
+      'Use this form to <strong>check which emails for a template</strong>: </br>' +
+      '<form action="/retrieveEmailsForTemplate" method="POST">'+ 
+      'Enter TemplateName to check: <input type="text" name="emailTemplate"><br>'+
+      '<input type="submit" value="Submit text" />'+
+      '</form>';
+
+
+    HTMLbody = form1 + form2 + form3 + form4 + form5 + form6 + form7 + form8; 
+    var body =  HTMLbody
     utils.writeHTMLPage(response,body);
     }
   });
 
+}
+
+function retrieveEmailsForTemplate (response, postData) {
+  templateToCheck = querystring.parse(postData).emailTemplate;
+
+  utils.retrieveEmailsForTemplate(templateToCheck, function (err, emails) {
+    body = "";
+    if (emails != false) {
+      emails.forEach(function(address) {
+        body = body + "<br/>" + address.emailAddress;
+      });
+    } else {
+      body = "no emails";
+    }
+    utils.writeHTMLPage(response, body);
+  });
 }
 
 // This is the initial page. Asks for two parameters, source file and file to check.
@@ -90,16 +128,16 @@ function checkSingleEmail(response, postData) {
     if (err) {
       return console.log("Error: " + err);
     }
-    if (data) {
+    if (data) { // if there is a result
       if (templates.hasOwnProperty(templateToCheck)) {
         body = "FOUND: The email address " + emailToCheck + " exists with the email template: " +  templateToCheck + "<br>";
       } else {
         body = "NOT FOUND: The email address " + emailToCheck + " exists but the template " +  templateToCheck + " is not there";
       }
-    } else {
+    } else { // if there is no result 
       body = "The email address " + emailToCheck + " does NOT exist";
     }
-    utils.writeHTMLPage(response, utils.getHTMLHead() + body + utils.getHTMLClose());
+    utils.writeHTMLPage(response, body);
   });
 }
 
@@ -114,7 +152,7 @@ function getEmailTemplates (response, postData) {
       docs.forEach (function (doc) {
         templates = templates + (doc.templateName) + '<br>';
       });
-      utils.writeHTMLPage(response, utils.getHTMLHead() + templates + utils.getHTMLClose());
+      utils.writeHTMLPage(response, templates);
     }
   });
 }
@@ -130,7 +168,7 @@ function getEmails (response, postData) {
       docs.forEach (function (doc) { 
         emails = emails + (JSON.stringify(doc))+ '<br>'; 
       });
-      utils.writeHTMLPage(response, utils.getHTMLHead() + emails + utils.getHTMLClose());
+      utils.writeHTMLPage(response, emails );
     }
   });
 }
@@ -138,9 +176,6 @@ function getEmails (response, postData) {
 //not in use
 function addFieldToDocs(response,postData) {
   
-  var HTMLhead = utils.getHTMLHead();
-  var HTMLbody = utils.getHTMLClose();
-
   mongodb.connect(mongoURI, function (err, db) {
       
     if (err)
@@ -152,7 +187,7 @@ function addFieldToDocs(response,postData) {
       if (err) 
         { console.error(err); response.send("Error" + err); }
     });
-    var body = HTMLhead + emails + HTMLbody;
+    var body = emails;
     utils.writeHTMLPage(response,body);
     
   })
@@ -177,7 +212,7 @@ function emailBounced (response, postData) {
     var emailArray = utils.getEmailsFromString(data)   // puts input from read file into array
 
     utils.updateEmail(emailArray, bouncedVal, dbName, function (err, newEmails) {
-      var content = utils.getHTMLHead() + newEmails + utils.getHTMLClose();
+      var content = newEmails;
       utils.writeHTMLPage(response, content); 
     });
   });
@@ -193,7 +228,7 @@ function removeEmailHandler (response, postData) {
   utils.removeEmailAddress(removeEmail, function (err, result) {
     if (err) { console.log("Error: " + err); console.error(err); return; }
 
-    var content = utils.getHTMLHead() + " RemovedEmail " + removeEmail + " " + result + utils.getHTMLClose();
+    var content = " RemovedEmail " + removeEmail + " " + result;
     utils.writeHTMLPage(response, content); 
 
   });
@@ -207,7 +242,7 @@ function addNotesToEmail (response, postData) {
 
 
 //Adds email to db
-function addNewDoc(response, postData) {
+function addNewEmailAddress(response, postData) {
 
   // should put this into a callback so it is not blocking.
   var data;
@@ -229,6 +264,22 @@ function addNewDoc(response, postData) {
   utils.writeHTMLPage(response, content);
 }  
 
+
+//Adds template to db
+function addNewTemplate(response, postData) {
+
+  // should put this into a callback so it is not blocking.
+  var data;
+  var templateName = querystring.parse(postData).emailTemplate;
+
+  utils.addNewTemplate(templateName, function (err, result ) {
+    if (err) {
+      console.error(err);
+    }
+  });
+  var content = "You've sent: " + querystring.parse(postData).emailTemplate + "\<br\>\<br\>" +"Input another file: \<a href\=\"\/\"\>Click here\<\/a\>";
+  utils.writeHTMLPage(response, content);
+} 
 
 
 //Adds emails to db == needs to be updated to update in one call
@@ -273,7 +324,7 @@ function addNewList(response, postData) {
       var content = "You've sent: " + querystring.parse(postData).inputfile + "\<br\>\<br\>" + 
         "The number of duplicates: " + existingCount + ". Number of New: " + newCount + "</br>" +
         newEmails;
-      utils.writeHTMLPage(response, utils.getHTMLHead() + content + utils.getHTMLClose());
+      utils.writeHTMLPage(response, content);
     });
   });
   
@@ -294,7 +345,7 @@ function checkEmailList(response, postData) {
     var emailArray = utils.getEmailsFromString(data)   // puts input from read file into array
 
     checkAll(emailArray, templateName, function (newEmails) {
-      var content = utils.getHTMLHead() + newEmails + utils.getHTMLClose();
+      var content = newEmails;
       utils.writeHTMLPage(response, content); 
     });
   });
@@ -328,12 +379,17 @@ var checkAll = function(emailArray, templateName, callback) {
 }
 
 
+
+
 exports.start = start;
 exports.getEmails = getEmails;
 exports.addFieldToDocs = addFieldToDocs;
 exports.checkSingleEmail = checkSingleEmail;
 exports.checkEmailList = checkEmailList;
-exports.addNewDoc = addNewDoc;
+exports.addNewEmailAddress = addNewEmailAddress;
 exports.addNewList = addNewList;
 exports.emailBounced = emailBounced;
 exports.removeEmailHandler = removeEmailHandler;
+exports.addNewTemplate = addNewTemplate;
+exports.retrieveEmailsForTemplate = retrieveEmailsForTemplate;
+

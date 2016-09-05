@@ -25,6 +25,8 @@ adds a single email
 <em>add emails from a file:</em> 
 adds a list of emails.
 
+<em>check all emails for a particular template</em>
+
 If the email already exists in baseline, then it prepends: 'Duplicate' to the entry and adds to the 'duplicates.txt' file
 
 NOTE: after EACH file submission, test.txt and duplicates.txt is only appended.

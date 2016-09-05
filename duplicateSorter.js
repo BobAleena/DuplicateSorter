@@ -18,7 +18,7 @@ handle["/checkSingleEmail"] = requestHandlers.checkSingleEmail;
 handle["/checkEmailList"] = requestHandlers.checkEmailList;  
 
 // adds a single new email to db
-handle["/addNewDoc"] = requestHandlers.addNewDoc; 
+handle["/addNewEmailAddress"] = requestHandlers.addNewEmailAddress; 
 
 // add a list of new emails to db 
 handle["/addNewList"] = requestHandlers.addNewList;
@@ -28,6 +28,12 @@ handle["/emailBounced"] = requestHandlers.emailBounced;
 
 //remove email 
 handle["/removeEmailHandler"] = requestHandlers.removeEmailHandler;
+
+//addTemplate
+handle["/addNewTemplate"] = requestHandlers.addNewTemplate;
+
+//getEmails
+handle["/retrieveEmailsForTemplate"] = requestHandlers.retrieveEmailsForTemplate;
 
 
 server.start(router.route, handle);
