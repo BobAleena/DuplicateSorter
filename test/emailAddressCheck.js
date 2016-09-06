@@ -140,17 +140,48 @@ describe('#fieldsExistTest()', function() {
 
 });
 
+describe('#addTemplateToExisting()', function() {
+  it('should return true on a successful add of the new template', function (done) {
+    utils.addNewDoc("thisEmail@AddedForTests.com", "testtemplate", function (err, result){
+      if (result == undefined) {
+        assert(false);
+      } else {
+        assert (true);
+      }
+      done();
+    });
+  });
+})
+
+
+describe('#emailAddressAndNewTemplateExistTest()', function() {
+
+  it('should return true when the name is present, but template is not present', function(done) {
+    utils.emailAddressAndTemplateExists("thisEmail@AddedForTests.com", "testtemplate", function (err, returnVal, returnVal2) {
+      assert.equal(true, returnVal);
+      assert.equal(true, returnVal2);
+      done();
+    });
+  });
+
+});
+
 
 
 describe('#addNewDocNegativeTest', function () {
-  it('should not be successful as email and template already exist, should return undefined', function (done) {
+  it('should not be successful as email and template already exist, should return false', function (done) {
   	utils.addNewDoc("thisEmail@AddedForTests.com", "2015Update", function (err, result){
   		if (result == undefined) {
+        //console.log("undefined")
   		  assert(true);
-  		} else {
+  		} else if (result == false) {
+        //console.log("did not add - false")
+        assert (true);
+      } else {
+        //console.log("added");
   		  assert (false);
   		}
-  		done();
+      done();
   	});
   });
 });
@@ -242,9 +273,9 @@ it("should be successful with a number of emailaddresses", function(done) {
     if (err) {
       console.error(err);      
     }
-    result.forEach(function(address) {
-      console.log(address)
-    });
+    //result.forEach(function(address) {
+    //  console.log(address)
+    //});
     assert (result);
     done();
   });

@@ -21,6 +21,7 @@ function start(response, postData) {
       { console.error(err); response.send("Error " + err); }
     else {
       docs.forEach (function (doc) {
+        console.log(doc.templateName);
         templates = templates + "<option value=\"" + (doc.templateName) + "\">" + doc.templateName +"</option>";
       });
     templates = templates + "<option value=\"testtemplate\">TestTemplate</option>";
@@ -90,7 +91,7 @@ function start(response, postData) {
     form8 =
       'Use this form to <strong>check which emails for a template</strong>: </br>' +
       '<form action="/retrieveEmailsForTemplate" method="POST">'+ 
-      'Enter TemplateName to check: <input type="text" name="emailTemplate"><br>'+
+      'Choose template to check for:' + templates + '<br>' +
       '<input type="submit" value="Submit text" />'+
       '</form>';
 
@@ -255,9 +256,18 @@ function addNewEmailAddress(response, postData) {
     if (emailExists && templateExists) {
       duplicateEmailStream.write("Duplicate: " + newEmail + "\r\n");  // prepends with 'DUPLICATE' - in future put in new file
     } else if (emailExists && !templateExists) {
-      console.log('template does not exist');
+      //console.log('template does not exist');
+      utils.addNewDoc(newEmail, templateName, function(err, result) { 
+        if (err) { 
+          console.error(err) 
+        } 
+      });  
     } else {
-      utils.addNewDoc(newEmail, templateName, function(err, result) {});            
+      utils.addNewDoc(newEmail, templateName, function(err, result) { 
+        if (err) { 
+          console.error(err) 
+        } 
+      });  
     } 
   });
   var content = "You've sent: " + querystring.parse(postData).emailAddress + "\<br\>\<br\>" +"Input another file: \<a href\=\"\/\"\>Click here\<\/a\>";
