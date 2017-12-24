@@ -95,13 +95,41 @@ function start(response, postData) {
       '<input type="submit" value="Submit text" />'+
       '</form>';
 
+    form9 =
+      'Use this form to <strong>get ALL templates for an email</strong>: </br>' +
+      '<form action="/getAllTemplatesforEmail" method="POST">'+ 
+      'Enter email to retrieve: <input type="text" name="emailAddress"><br>'+
+      '<input type="submit" value="Submit email Address" />'+
+      '</form>';
 
-    HTMLbody = form1 + form2 + form3 + form4 + form5 + form6 + form7 + form8; 
+
+    HTMLbody = form1 + form2 + form3 + form4 + form5 + form6 + form7 + form8 + form9; 
     var body =  HTMLbody
     utils.writeHTMLPage(response,body);
     }
   });
 
+}
+
+
+function getAllTemplatesforEmail (response, postData) {
+  emailToRetrieve = querystring.parse(postData).emailAddress;
+
+  console.log(emailToRetrieve);
+  utils.getAllTemplatesForEmail(emailToRetrieve, function (err, templates) {
+    body = "";
+    if (templates != false) {
+      console.log("return templates: ");
+      console.log(templates);
+      //templateArray = templates.toArray()
+      //templates.forEach(function(template) {
+        body = body + "<br/>" + JSON.stringify(templates);
+      //});
+    } else {
+      body = "no templates";
+    }
+    utils.writeHTMLPage(response, body);
+  });
 }
 
 function retrieveEmailsForTemplate (response, postData) {
@@ -399,9 +427,6 @@ var checkAll = function(emailArray, templateName, callback) {
   });
 }
 
-
-
-
 exports.start = start;
 exports.getEmails = getEmails;
 exports.addFieldToDocs = addFieldToDocs;
@@ -412,5 +437,7 @@ exports.addNewList = addNewList;
 exports.emailBounced = emailBounced;
 exports.removeEmailHandler = removeEmailHandler;
 exports.addNewTemplate = addNewTemplate;
+exports.getAllTemplatesforEmail = getAllTemplatesforEmail;
 exports.retrieveEmailsForTemplate = retrieveEmailsForTemplate;
+
 

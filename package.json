@@ -7,7 +7,8 @@
     "test": "../node_modules/.bin/cucumber.js"
   },
   "dependencies": {
-    "mongojs": "^2.4.1"
+    "mongojs": "^2.4.1",
+    "uglify-js": "^3.2.2"
   },
   "devDependencies": {
     "cucumber": "^0.4.1"

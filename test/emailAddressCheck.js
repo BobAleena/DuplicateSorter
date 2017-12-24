@@ -1,13 +1,21 @@
 var assert = require('assert'),
     utils = require ('../lib/utils.js');
 
+
 describe('#emailTemplatePostiveTest', function () {
   it('should return documents of all templates including name to test', function (done) {
   	utils.retrieveAllDocs ("emailTemplates", function (err, docs) {
       //should only be one update currently
       docs.forEach (function (doc) { 
-      	//assert(typeof 'doc.templateName' == 'string');
-        assert.equal('2015Update',doc.templateName);
+      	if (doc.templateName == '2015Update') {
+          assert.equal('2015Update',doc.templateName);
+        } else if (doc.templateName == '2016Update') {
+          assert.equal('2016Update',doc.templateName);
+        } else if (doc.templateName == '2016UpdateV2') {
+          assert.equal('2016UpdateV2',doc.templateName);
+        } else if (doc.templateName == '2017Update') {
+          assert.equal('2017Update',doc.templateName);
+        } else { assert(false); }  // should not get here unless new template that has not been added yet
       });
       done();	
   	});
@@ -56,7 +64,7 @@ describe('#emailAddressDoesNotExistTest()', function() {
 
   it('should return false when the value is not present', function(done) {
   	utils.emailAddressExists("thisEmail@doesNotExist", function (err, returnVal, templates) {
-  		if (err) {console.err(err); }
+  		if (err) {console.error(err); }
   	  assert.equal(false, returnVal);
   	  done();
   	});
@@ -106,7 +114,7 @@ describe('#fieldExistsTest()', function() {
 
   it('should return true when the value is  present', function(done) {
   	utils.fieldExists({"emailAddress": "thisemail@addedfortests.com"}, function (err, returnVal) {
-  		if (err) {console.err(err); }
+  		if (err) {console.error(err); }
       console.log(returnVal);
   	  assert.equal(true, returnVal);
   	  done();
@@ -120,7 +128,7 @@ describe('#fieldDoesNotExistTest()', function() {
 
   it('should return false when the value is not present', function(done) {
   	utils.fieldExists({"emailAddress": "thisEmail@NotAddedForTests.com"}, function (err, returnVal) {
-  		if (err) {console.err(err); }
+  		if (err) {console.error(err); }
   	  assert.equal(false, returnVal);
   	  done();
   	});
@@ -132,7 +140,7 @@ describe('#fieldsExistTest()', function() {
 
   it('should return 1 when the value is not present', function(done) {
   	utils.fieldExists({"emailAddress": "thisemail@addedfortests.com", "EmailsSent": { "2015Update": 1} }, function (err, returnVal) {
-  		if (err) {console.err(err); }
+  		if (err) {console.error(err); }
   	  assert.equal(true, returnVal);
   	  done();
   	});
@@ -282,6 +290,29 @@ it("should be successful with a number of emailaddresses", function(done) {
 });
 
 });
+
+  describe('GetAllTemplatesForEmail', function () {
+    it ("should be successful and should show all templates for provided email address", function(done) {
+      utils.getAllTemplatesForEmail("blahblah@gmail.com", function(err, result) {
+        if (err) {
+          console.error(err);
+          assert(false);
+        }
+        //console.log("result is ");
+        //console.log(result);
+        val = "{\"testtemplate\":1,\"2015Update\":1,\"2016UpdateV2\":1}";
+        //console.log(val);
+        if (JSON.stringify(result) == val) {
+          assert(true);
+        } else { 
+          assert(false) 
+        }
+        done();
+      });
+    });
+
+  });
+
 
 
 

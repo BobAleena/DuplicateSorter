@@ -35,6 +35,9 @@ handle["/addNewTemplate"] = requestHandlers.addNewTemplate;
 //getEmails
 handle["/retrieveEmailsForTemplate"] = requestHandlers.retrieveEmailsForTemplate;
 
+//getTemplates
+handle["/getAllTemplatesforEmail"] = requestHandlers.getAllTemplatesforEmail;
+
 
 server.start(router.route, handle);
 
