@@ -2,9 +2,13 @@
 
 Sorts out duplicates of email addresses.
 
+++ Dependencies: 
+mongojs@2.4.1 
+
 Start server:
 
 node duplicateSorter.js or npm start
+(you need to set your environment variables as well)
 
 This now sorts emails based on a baseline expected to exist within a database - in this case MongoDB. 
 After starting, go to

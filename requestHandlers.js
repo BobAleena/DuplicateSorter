@@ -293,7 +293,7 @@ function addNewTemplate(response, postData) {
 
 
 //Adds emails to db == needs to be updated to update in one call
-function addNewList(response, postData) {
+function addNewList(response, postData) {  //need to write new test for this somehow...
 
   // should put this into a callback so it is not blocking.
   var data;
@@ -301,6 +301,8 @@ function addNewList(response, postData) {
   var newEmails = "";
   var existingCount = 0;
   var newCount = 0;
+  var newTemplateToExisting = "";
+  var newTemplateToExistingCount = 0;
   // read input file containing new emails and put into variable data
   fs.readFile("./tmp/" + querystring.parse(postData).inputfile, 'utf8', function (err,data) {
     if (err) {
@@ -308,20 +310,23 @@ function addNewList(response, postData) {
     }      
 
     var emailArray = utils.getEmailsFromString(data)   // puts input from read file into array
-
     var duplicateEmailStream = fs.createWriteStream("./tmp/duplicates.txt",{'flags': 'a'});
-
     async.eachSeries(emailArray, function(entry, cb) {   
      //emailArray.forEach( function(entry) {        // check each item in array (these are the potential new emails)
-      utils.emailAddressAndTemplateExists(entry, templateName, function (err, emailExists, templateExists ) {
+    utils.emailAddressAndTemplateExists(entry, templateName, function (err, emailExists, templateExists ) {
         if (emailExists && templateExists) {
           duplicateEmailStream.write("Duplicate: " + entry + "\r\n");  // prepends with 'DUPLICATE' - in future put in new file
           existingCount++;
           cb();
-        } else if (emailExists && !templateExists) {
+        } else if (emailExists && !templateExists) { // means email is there already but template is not. update with new template.
           console.log('template does not exist');
-          cb();
-        } else {
+          utils.addNewDoc(entry, templateName, function(err, result) {
+            newTemplateToExisting = newTemplateToExisting + entry + "</br>";
+            newTemplateToExistingCount++
+            cb();
+          });
+        } else { // should get here if no email AND no template
+          //console.log('should never get here! Error in logic!'); 
           utils.addNewDoc(entry, templateName, function(err, result) {
             newEmails = newEmails + entry + "</br>";
             newCount++
@@ -333,7 +338,10 @@ function addNewList(response, postData) {
       if (err) { throw err; }
       var content = "You've sent: " + querystring.parse(postData).inputfile + "\<br\>\<br\>" + 
         "The number of duplicates: " + existingCount + ". Number of New: " + newCount + "</br>" +
-        newEmails;
+        newEmails +
+        "</br> and the number of templates to existing: " + newTemplateToExistingCount + "</br>" +
+        newTemplateToExisting;
+;
       utils.writeHTMLPage(response, content);
     });
   });
@@ -350,7 +358,10 @@ function checkEmailList(response, postData) {
   var templateName = querystring.parse(postData).emailTemplate;
   // read input file containing new emails and put into variable data
   fs.readFile("./tmp/" + querystring.parse(postData).inputfile, 'utf8', function (err,data) {
-    if (err) { console.log("Error: " + err); console.error(err); return; }
+    if (err) { 
+      console.log("Error: " + err); console.error(err); 
+      console.log("Are you sure the file is in the tmp directory?")
+      return; }
 
     var emailArray = utils.getEmailsFromString(data)   // puts input from read file into array
 
@@ -374,16 +385,16 @@ var checkAll = function(emailArray, templateName, callback) {
           ++existingCount;
           duplicateEmailStream.write("Duplicate: " + entry + "\r\n");  // prepends with 'DUPLICATE' - in future put in new file    } else if (emailExists && !templateExists) {
         } else {
-          console.log('template does not exist');
+          console.log(entry.toString()); // print emails that ARE in system, but not for template, to console.
         }
       } else {
         ++newCount;
-        newEmails = newEmails + entry + "</br>";
+        newEmails = newEmails + entry + "</br>";  //these will get printed to browser
       }
     cb();
     });
   }, function (err) {
-    if (err) { throw err; }
+    if (err) { console.log("Error: " + err); console.error(err); throw err; }
     callback("The number of duplicates: " + existingCount + ". Number of New: " + newCount + "</br>" + newEmails);
   });
 }
