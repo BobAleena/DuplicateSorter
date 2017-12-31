@@ -102,8 +102,15 @@ function start(response, postData) {
       '<input type="submit" value="Submit email Address" />'+
       '</form>';
 
+    form10 =
+      'Use this form to <strong>get ALL emailAddresses</strong>: </br>' +
+      '<form action="/getEmails" method="POST">'+ 
+      '<input type="submit" value="Get All Emails" />'+
+      '</form>';
 
-    HTMLbody = form1 + form2 + form3 + form4 + form5 + form6 + form7 + form8 + form9; 
+
+
+    HTMLbody = form1 + form2 + form3 + form4 + form5 + form6 + form7 + form8 + form9 + form10; 
     var body =  HTMLbody
     utils.writeHTMLPage(response,body);
     }
@@ -195,7 +202,7 @@ function getEmails (response, postData) {
       { console.error(err); response.send("Error " + err); }
     else {
       docs.forEach (function (doc) { 
-        emails = emails + (JSON.stringify(doc))+ '<br>'; 
+        emails = emails + (JSON.stringify(doc.emailAddress))+ '<br>'; 
       });
       utils.writeHTMLPage(response, emails );
     }
@@ -347,7 +354,7 @@ function addNewList(response, postData) {  //need to write new test for this som
           existingCount++;
           cb();
         } else if (emailExists && !templateExists) { // means email is there already but template is not. update with new template.
-          console.log('template does not exist');
+          console.log('email exists, but not with given template: ' + templateName + ". Adding...");
           utils.addNewDoc(entry, templateName, function(err, result) {
             newTemplateToExisting = newTemplateToExisting + entry + "</br>";
             newTemplateToExistingCount++
@@ -413,7 +420,7 @@ var checkAll = function(emailArray, templateName, callback) {
           ++existingCount;
           duplicateEmailStream.write("Duplicate: " + entry + "\r\n");  // prepends with 'DUPLICATE' - in future put in new file    } else if (emailExists && !templateExists) {
         } else {
-          console.log(entry.toString()); // print emails that ARE in system, but not for template, to console.
+          console.log("In system but not template: " + entry.toString()); // print emails that ARE in system, but not for template, to console.
         }
       } else {
         ++newCount;

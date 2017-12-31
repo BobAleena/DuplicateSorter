@@ -313,6 +313,20 @@ it("should be successful with a number of emailaddresses", function(done) {
 
   });
 
+describe('GetAllEmails', function () {
+  it ("should retreive all emails and equal the correct count", function (done) {
+    utils.retrieveAllDocs("emailAddresses", function (err, result) {
+      if (err) {
+        console.error(err);
+      }
+      console.log(result.length);
+      assert(result.length == 1002);
+      done();
+    })
+  });
+
+});
+
 
 
 
