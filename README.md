@@ -35,10 +35,19 @@ If the email already exists in baseline, then it prepends: 'Duplicate' to the en
 
 NOTE: after EACH file submission, test.txt and duplicates.txt is only appended.
 
+TESTS: Run 'mocha'
+Known Issue, does not terminate at end. must be missing a 'done' somewhere.
 
 ## future considerations:
-+ add DB support (done)
++ (done) add DB support
 + add support for additional fields in addition to email (now supports adding a reference 'template name')
++ cleanup button names, labels, instructions
++ add more info on required format of input files
++ [bug] remove quotes from 'all emails' option
++ change emaillist check to also give back list of match existing but not for template. (currently does give 100% no match)
++ selecting file from any location
+* retrieve emails without flagged ones
+* flag emails from a file rather than just individually
 
 Meant to run locally -- probably overkill but wanted to use it as a starter to try out other technologies - Mocha, Chai... (currently using Mocha for testing)
 

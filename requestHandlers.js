@@ -125,18 +125,33 @@ function getAllTemplatesforEmail (response, postData) {
   console.log(emailToRetrieve);
   utils.getAllTemplatesForEmail(emailToRetrieve, function (err, templates) {
     body = "";
+    utils.getHTMLHead();
     if (templates != false) {
       console.log("return templates: ");
       console.log(templates);
+
+      for(var x in templates){
+        body = body + x + "<br/>"
+        utils.checkResponseFlag(emailToRetrieve, x, function (err, answer) { //this doesnt work! ends before callback
+          if (err != null) {
+            utils.writeMoreHTML(response,err);
+          } else {
+            utils.writeMoreHTML(response,answer);
+          }
+        });
+      }
+      
       //templateArray = templates.toArray()
       //templates.forEach(function(template) {
-        body = body + "<br/>" + JSON.stringify(templates);
+      //body = body + "<br/>" + JSON.stringify(templates);
       //});
     } else {
       body = "no templates";
     }
-    utils.writeHTMLPage(response, body);
+   // utils.writeHTMLPage(response, body);
   });
+          utils.getHTMLClose();
+        response.end();
 }
 
 function retrieveEmailsForTemplate (response, postData) {
@@ -160,11 +175,11 @@ function checkSingleEmail(response, postData) {
   emailToCheck = querystring.parse(postData).emailAddress;//, 'utf8', function (err, data) {
   templateToCheck = querystring.parse(postData).emailTemplate;
   var body = "";
-  utils.emailAddressExists(emailToCheck, function (err, data, templates ) {
+  utils.emailAddressExists(emailToCheck, function (err, dataExists, templates ) {
     if (err) {
       return console.log("Error: " + err);
     }
-    if (data) { // if there is a result
+    if (dataExists) { // if there is a result
       if (templates.hasOwnProperty(templateToCheck)) {
         body = "FOUND: The email address " + emailToCheck + " exists with the email template: " +  templateToCheck + "<br>";
       } else {

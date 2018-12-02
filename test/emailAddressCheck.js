@@ -15,6 +15,8 @@ describe('#emailTemplatePostiveTest', function () {
           assert.equal('2016UpdateV2',doc.templateName);
         } else if (doc.templateName == '2017Update') {
           assert.equal('2017Update',doc.templateName);
+        } else if (doc.templateName == '2018BabyUpdate') {
+          assert.equal('2018BabyUpdate',doc.templateName);
         } else { assert(false); }  // should not get here unless new template that has not been added yet
       });
       done();	
@@ -28,7 +30,7 @@ describe('#emailTemplateNegativeTest', function () {
       //should only be one update currently
       docs.forEach (function (doc) { 
       	assert(typeof 'doc.templateName' == 'string');
-        assert.notEqual('2020Update',doc.templateName);
+        assert.notEqual('2020Update' == doc.templateName, true);
       });
       done();	
   	});
@@ -300,7 +302,7 @@ it("should be successful with a number of emailaddresses", function(done) {
         }
         //console.log("result is ");
         //console.log(result);
-        val = "{\"testtemplate\":1,\"2015Update\":1,\"2016UpdateV2\":1}";
+        val = "{\"testtemplate\":1,\"2015Update\":1,\"2016UpdateV2\":1,\"2017Update\":1,\"2018BabyUpdate\":1}";
         //console.log(val);
         if (JSON.stringify(result) == val) {
           assert(true);
@@ -318,9 +320,10 @@ describe('GetAllEmails', function () {
     utils.retrieveAllDocs("emailAddresses", function (err, result) {
       if (err) {
         console.error(err);
+        done()
       }
       console.log(result.length);
-      assert(result.length == 1002);
+      assert(result.length == 1175);
       done();
     })
   });
