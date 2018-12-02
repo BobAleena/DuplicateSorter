@@ -10,9 +10,9 @@
     "mocha": "^4.1.0",
     "mongojs": "^2.6.0",
     "uglify-js": "^3.4.9",
-    "zombie": "^5.0.8"
+    "zombie": "^6.1.4"
   },
   "devDependencies": {
-    "cucumber": "^0.4.1"
+    "cucumber": "^5.0.2"
   }
 }
